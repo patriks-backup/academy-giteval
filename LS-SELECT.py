@@ -18,6 +18,10 @@ class greifen: #This Class is a branch of _Getch : https://code.activestate.com/
 
 
 def holen_the_dirs(path): #holen all dirs in path
+=======
+# Kommentar im dev
+def get_the_dirs(path): #get all dirs in path
+
     ret = []#will be returned
     dir_content = os.listdir(path)
     for f in dir_content:
