@@ -9,12 +9,19 @@ class greifen: #This Class is a branch of _Getch : https://code.activestate.com/
     def __call__(self):
         fi = sys.stdin.fileno() #set input file-interface as 0
         attr = termios.tcholenattr(fi) #holen attributes of fi
+
+class _Catch: #This Class is a branch of _Getch : https://code.activestate.com/recipes/134892/
+    def __call__(self):
+        fi = sys.stdin.fileno() #set input file-interface as 0
+        attr = termios.tcgetattr(fi) #get attributes of fi
+
         try:
             tty.setraw(sys.stdin.fileno())  #try raw input for tty
             key_in = sys.stdin.read(1)          #key_in is a single input
         finally:
             termios.tcsetattr(fi, termios.TCSADRAIN, attr) # add fi, don't change by input
         return key_in
+
 
 
 def holen_the_dirs(path): #holen all dirs in path
@@ -26,6 +33,10 @@ def get_the_dirs(path): #get all dirs in path
 
 def holen_the_dirs(path): #holen all dirs in path
 
+
+# Kommentar im dev
+def get_the_dirs(path): #get all dirs in path
+
     ret = []#will be returned
     dir_content = os.listdir(path)
     for f in dir_content:
@@ -35,10 +46,17 @@ def holen_the_dirs(path): #holen all dirs in path
     ret.sort(key=lambda e : pyls.sortingname(e)) # using the sorting from my script
     return ret
 
+
 def gehen_up(path):
     return os.path.abspath(path+"/..")
     
 def gehen_down(path,dir):
+
+def go_up(path):
+    return os.path.abspath(path+"/..")
+    
+def go_down(path,dir):
+
     return os.path.abspath(path+"/"+dir)
     
 def selector():
@@ -48,12 +66,20 @@ def selector():
     print("\tto ls the chosen dir, hit l. Hit q to quit\n")
 
     flags = input("But first, define ls options.\n")
+
     inkey = greifen() #<- class on call() prepares stdin.read(1)
+
+    inkey = _Catch() #<- class on call() prepares stdin.read(1)
+ 
     #prepare:
     k = "" #<- this will be the keypress
     path = "/" #starting path
     pos = 0 #position in dir
+
     nav_list = holen_the_dirs("/") #list to navigate
+
+    nav_list = get_the_dirs("/") #list to navigate
+
     breadcrumbs = [""] #breadcrumbs are a path to current view
 
     left_d = "" #dirs left are 0 at start
@@ -84,6 +110,7 @@ def selector():
             pos = (min(pos, len(nav_list)-1)) # no underflow
 
         elif k =="s": #down
+
             #only gehen down, if dirs inside that entry
             if len(holen_the_dirs(gehen_down(path,nav_list[pos]))) > 0:
                 path = gehen_down(path,nav_list[pos])  #new path
@@ -94,6 +121,18 @@ def selector():
         elif k =="w": #up
             path = gehen_up(path)                      #new path
             nav_list=holen_the_dirs(path)             #holen content
+
+            #only go down, if dirs inside that entry
+            if len(get_the_dirs(go_down(path,nav_list[pos]))) > 0:
+                path = go_down(path,nav_list[pos])  #new path
+                breadcrumbs.append(nav_list[pos])   #added breadcrumb before overwrite
+                nav_list=get_the_dirs(path)         #get content
+                pos = 0                             #reset!
+
+        elif k =="w": #up
+            path = go_up(path)                      #new path
+            nav_list=get_the_dirs(path)             #get content
+
             pos = 0                                 #reset
             if len(breadcrumbs)>0:                  #pop last entry if exist
                 breadcrumbs.pop()    
@@ -116,7 +155,11 @@ def selector():
     else:                                   #make ls call
         print()                             #finish print!
         print("\n")                         #add spacing
+
         lsdir = gehen_down(path,nav_list[pos]) #holen dir to be listed
+
+        lsdir = go_down(path,nav_list[pos]) #get dir to be listed
+
         print(lsdir[1:])                    #Display name without the leading "/"
         # call the pyls ls function, placeholder args[0] corresponding to sys.argv[0]
         pyls.main_ls(["pyls.py","-" + flags, lsdir])   
