@@ -16,7 +16,7 @@ class _Catch: #This Class is a branch of _Getch : https://code.activestate.com/r
             termios.tcsetattr(fi, termios.TCSADRAIN, attr) # add fi, don't change by input
         return key_in
 
-
+# Kommentar im dev
 def get_the_dirs(path): #get all dirs in path
     ret = []#will be returned
     dir_content = os.listdir(path)
