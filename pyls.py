@@ -1,11 +1,11 @@
 #! /usr/bin/env python3
 """"A Python Script resembling a part of the linux ls command"""
-import os
-import stat as getstat
-from pathlib import Path as plp
-from datetime import datetime as dt
+#import os
+#import stat as getstat
+#from pathlib import Path as plp
+#from datetime import datetime as dt
 #from datetime import date as dtdate
-import sys
+#import sys
 
 #options as global variable to get easy access
 lsopt = {
@@ -498,6 +498,7 @@ def main_ls(args_in):
         print() # make a horizontally spacing after each dir
     #done
 
+###########################  Here we go #########################
 
 if __name__ == '__main__':
     #try:
